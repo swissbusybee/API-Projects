@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="Content-Security-Policy"
+      content="default-src: http: https: 'self'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Giphy API Demo</title>
+    <style>
+
+      html {
+        font-size: 20px;
+        line-height: 1.6;
+        font-family: "Roboto", sans-serif;
+        background: #CCFFFF;
+      }
+      form * {
+        font-family: inherit;
+        font-size: inherit;
+      }
+      img {
+        width: 100%;
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <form>
+        <label for="search">Search Giphs</label>
+        <input id="search" type="search" />
+        <button id="btnSearch">Go</button>
+      </form>
+      <div class="out"></div>
+    </main>
+    <script>
+      let APIKEY = "MjOhqZ76AUReO5vJIOrqzghenDQjcYsH&s";
+
+      document.addEventListener("DOMContentLoaded", init);
+      function init() {
+        document.getElementById("btnSearch").addEventListener("click", ev => {
+          ev.preventDefault(); //to stop the page reload
+          let url = `https://api.giphy.com/v1/gifs/search?api_key=${APIKEY}&limit=5&q=`
+          let str = document.getElementById("search").value.trim();
+          url = url.concat(str);
+          console.log(url);
+          fetch(url)
+            .then(response => response.json())
+            .then(content => {
+              //  data, pagination, meta
+              console.log(content.data);
+              console.log("META", content.meta);
+              let fig = document.createElement("figure");
+              let img = document.createElement("img");
+              let fc = document.createElement("figcaption");
+              img.src = content.data[1].images.downsized.url;
+              img.alt = content.data[1].title;
+              fc.textContent = content.data[1].title;
+              fig.appendChild(img);
+              fig.appendChild(fc);
+              let out = document.querySelector(".out");
+              out.insertAdjacentElement("afterbegin", fig);
+              document.querySelector("#search").value = "";
+            })
+            .catch(err => {
+              console.error(err);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<!--Code to only search dog giphs and button is not linked and there is no search function
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Giphy API</title>
+</head>
+<body>
+  <img src="#" />
+  <br>
+  <br>
+  <button type='submit' class="query-button" id="button"> Search for GIFs
+  </button>
+  <script>
+    const img = document.querySelector('img');
+
+    async function getDogs() {
+    const response = await fetch('https://api.giphy.com/v1/gifs/translate?api_key=MjOhqZ76AUReO5vJIOrqzghenDQjcYsH&s=dogs', {mode: 'cors'})
+    const dogData = await response.json();
+    img.src = dogData.data.images.original.url;
+  }
+  getDogs();
+  </script>
+
+</body>
+</html>
+-->
